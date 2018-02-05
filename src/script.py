@@ -11,7 +11,7 @@
 import sys, os, multiprocessing, csv
 from urllib.request import urlopen
 from PIL import Image
-from io import StringIO
+from io import BytesIO
 
 
 def ParseData(data_file):
@@ -38,7 +38,7 @@ def DownloadImage(key_url):
         return
 
     try:
-        pil_image = Image.open(StringIO(image_data))
+        pil_image = Image.open(BytesIO(image_data))
     except Exception as err:
         print(f'Warning: Failed to parse image {key} because {err}')
         return
