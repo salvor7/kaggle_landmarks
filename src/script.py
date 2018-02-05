@@ -24,41 +24,41 @@ def ParseData(data_file):
 def DownloadImage(key_url):
     out_dir = sys.argv[2]
     (key, url) = key_url
-    filename = os.path.join(out_dir, '%s.jpg' % key)
+    filename = os.path.join(out_dir, f'{key}.jpg')
 
     if os.path.exists(filename):
-        print('Image %s already exists. Skipping download.' % filename)
+        print(f'Image {filename} already exists. Skipping download.')
         return
 
     try:
         response = urlopen(url)
         image_data = response.read()
-    except:
-        print('Warning: Could not download image %s from %s' % (key, url))
+    except Exception as err:
+        print(f'Warning: Could not download image {key} from {url} because {err}')
         return
 
     try:
         pil_image = Image.open(StringIO(image_data))
-    except:
-        print('Warning: Failed to parse image %s' % key)
+    except Exception as err:
+        print(f'Warning: Failed to parse image {key} because {err}')
         return
 
     try:
         pil_image_rgb = pil_image.convert('RGB')
-    except:
-        print('Warning: Failed to convert image %s to RGB' % key)
+    except Exception as err:
+        print(f'Warning: Failed to convert image {key} to RGB because {err}')
         return
 
     try:
         pil_image_rgb.save(filename, format='JPEG', quality=90)
-    except:
-        print('Warning: Failed to save image %s' % filename)
+    except Exception as err:
+        print(f'Warning: Failed to save image {filename} because {err}')
         return
 
 
 def Run():
     if len(sys.argv) != 3:
-        print('Syntax: %s <data_file.csv> <output_dir/>' % sys.argv[0])
+        print(f'Syntax: {sys.argv[0]} <data_file.csv> <output_dir/>')
         sys.exit(0)
     (data_file, out_dir) = sys.argv[1:]
 
