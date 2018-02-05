@@ -27,7 +27,6 @@ def DownloadImage(key_url):
     filename = os.path.join(out_dir, f'{key}.jpg')
 
     if os.path.exists(filename):
-        print(f'Image {filename} already exists. Skipping download.')
         return
 
     try:
