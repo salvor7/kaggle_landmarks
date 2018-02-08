@@ -24,9 +24,15 @@ def ParseData(data_file):
 def DownloadImage(key_url):
     out_dir = sys.argv[2]
     (key, url) = key_url
+    out_dir = os.path.join(out_dir, key[:2])
+
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+
     filename = os.path.join(out_dir, f'{key}.jpg')
 
     if os.path.exists(filename):
+        print(f'Skipping file {key}')
         return
 
     try:
