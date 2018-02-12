@@ -26,6 +26,11 @@ from keras.utils.layer_utils import convert_all_kernels_in_model
 from keras.applications.resnet50 import identity_block, conv_block
 
 
+# model weights pretrained in theano using nchw channel order
+# to use tensorflow, we must explicitly set the channel order to nchw as that's nto the default
+K.set_image_dim_ordering('th')
+
+
 class Resnet50():
     """The Resnet 50 Imagenet model"""
 
@@ -44,6 +49,7 @@ class Resnet50():
             class_dict = json.load(f)
         self.classes = [class_dict[str(i)][1] for i in range(len(class_dict))]
 
+
     def predict(self, imgs, details=False):
         all_preds = self.model.predict(imgs)
         idxs = np.argmax(all_preds, axis=1)
@@ -58,7 +64,7 @@ class Resnet50():
 
 
     def create(self, size, include_top):
-        input_shape = (3,)+size
+        input_shape = (3,) + size
         img_input = Input(shape=input_shape)
         bn_axis = 1
 
@@ -112,8 +118,14 @@ class Resnet50():
 
     def fit(self, batches, val_batches, nb_epoch=1):
         self.model.fit_generator(batches, samples_per_epoch=batches.nb_sample, nb_epoch=nb_epoch,
-                validation_data=val_batches, nb_val_samples=val_batches.nb_sample)
+                 validation_data=val_batches, nb_val_samples=val_batches.nb_sample)
+
 
     def test(self, path, batch_size=8):
         test_batches = self.get_batches(path, shuffle=False, batch_size=batch_size, class_mode=None)
         return test_batches, self.model.predict_generator(test_batches, test_batches.nb_sample)
+
+
+if __name__ == '__main__':
+    # simple test to see if the object can be instantiated
+    Resnet50()
