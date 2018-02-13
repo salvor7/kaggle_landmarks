@@ -10,9 +10,9 @@ def path_string(*args):
     """Data accessor for the project
 
     path_string('test_images', '34983459873.jpg')
-    'c:\\AllProjects\\kagglelandmarks\\data\\test_images\\34983459873.jpg'
+    '....\\kagglelandmarks\\data\\test_images\\34983459873.jpg'
     """
-    return os.path.join(str(pathlib.Path(__file__).parents[1]), 'data', *args)
+    return os.path.join(str(pathlib.Path(__file__).parents[1]), *args)
 
 
 @functools.lru_cache(maxsize=1)
@@ -25,7 +25,7 @@ def landmark_images():
     landmark2image = defaultdict(list)
     image2landmark = {}
 
-    with open(path_string('recognition', 'train.csv')) as training_set:
+    with open(path_string('data', 'recognition', 'train.csv')) as training_set:
         reader = csv.reader(training_set)
         for image, url, landmark in reader:
             image2landmark[image] = landmark
