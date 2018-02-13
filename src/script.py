@@ -59,6 +59,8 @@ def DownloadImage(key_url):
     except Exception as err:
         print(f'Warning: Failed to save image {filename} because {err}')
         return
+    else:
+        print(f'Saved image {filename}')
 
 
 def Run():
@@ -72,7 +74,7 @@ def Run():
 
     key_url_list = ParseData(data_file)
     pool = multiprocessing.Pool(processes=16)
-    pool.map(DownloadImage, key_url_list)
+    pool.map(DownloadImage, key_url_list[::-1])     # flip the list
 
 
 if __name__ == '__main__':
