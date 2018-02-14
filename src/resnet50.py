@@ -124,8 +124,3 @@ class Resnet50():
     def test(self, path, batch_size=8):
         test_batches = self.get_batches(path, shuffle=False, batch_size=batch_size, class_mode=None)
         return test_batches, self.model.predict_generator(test_batches, test_batches.nb_sample)
-
-
-if __name__ == '__main__':
-    # simple test to see if the object can be instantiated
-    Resnet50()
