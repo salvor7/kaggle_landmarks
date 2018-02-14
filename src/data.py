@@ -1,9 +1,11 @@
 import csv
 import os
 import pathlib
+import random
 from collections import defaultdict
 
 import functools
+from shutil import copyfile
 
 
 def path_string(*args):
@@ -32,3 +34,40 @@ def landmark_images():
             landmark2image[landmark].append(image)
 
     return landmark2image, image2landmark
+
+
+def make_subsample(train=1000, valid=100):
+    """Make a subsample of landmark training images
+
+    Creates both training set, and a validation set from training data, and organizes them
+    in to landmark folders.
+
+    :param train: int
+    :param valid: int
+    :return: None
+    """
+    subsample = random.sample(landmark_images()[1].keys(), k=train+valid)
+
+    for idx, image_name in enumerate(subsample):
+        if idx < train:
+            subfolder = 'train_images'
+        else:
+            subfolder = 'valid_images'
+
+        landmark_name = landmark_images()[1][image_name]
+        image_new_folder = path_string('data', 'sample', subfolder, landmark_name)
+        os.makedirs(image_new_folder, exist_ok=True)
+
+        image_old_path = path_string('data', 'train_images', image_name[:2], image_name+'.jpg')
+        image_new_path = os.path.join(image_new_folder, image_name+'.jpg')
+        try:    # copy if file was downloaded
+            copyfile(image_old_path, image_new_path)
+        except FileNotFoundError:
+            try:    # remove folder if no files are in it already
+                os.rmdir(image_new_folder)
+            except OSError:
+                pass
+
+
+if __name__ == '__main__':
+    make_subsample()
