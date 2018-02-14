@@ -70,7 +70,7 @@ class Resnet50():
 
         x = Lambda(self.vgg_preprocess)(img_input)
         x = ZeroPadding2D((3, 3))(x)
-        x = Conv2D(64, 7, 7, subsample=(2, 2), name='conv1')(x)
+        x = Conv2D(64, (7, 7), strides=(2, 2), name='conv1')(x)
         x = BatchNormalization(axis=bn_axis, name='bn_conv1')(x)
         x = Activation('relu')(x)
         x = MaxPooling2D((3, 3), strides=(2, 2))(x)
@@ -102,15 +102,21 @@ class Resnet50():
         self.model.load_weights(get_file(fname, self.FILE_PATH+fname, cache_subdir='models'))
 
 
-    def get_batches(self, path, gen=image.ImageDataGenerator(),class_mode='categorical', shuffle=True, batch_size=8):
-        return gen.flow_from_directory(path, target_size=(224,224),
-                class_mode=class_mode, shuffle=shuffle, batch_size=batch_size)
+    @classmethod
+    def get_batches(cls, path, gen=image.ImageDataGenerator(),class_mode='categorical', shuffle=True, batch_size=8):
+        return gen.flow_from_directory(path,
+                                       target_size=(224,224),
+                                       class_mode=class_mode,
+                                       shuffle=shuffle,
+                                       batch_size=batch_size
+                                       )
 
 
     def finetune(self, batches):
         model = self.model
         model.layers.pop()
-        for layer in model.layers: layer.trainable=False
+        for layer in model.layers:
+            layer.trainable=False
         m = Dense(batches.nb_class, activation='softmax')(model.layers[-1].output)
         self.model = Model(model.input, m)
         self.model.compile(optimizer=RMSprop(lr=0.1), loss='categorical_crossentropy', metrics=['accuracy'])
