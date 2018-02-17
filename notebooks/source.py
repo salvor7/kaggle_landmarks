@@ -2,7 +2,6 @@
 Adds source code folder to PYTHONPATH, so imports can be made from notebooks.
 """
 
-import os
 import sys
 import pathlib
 
