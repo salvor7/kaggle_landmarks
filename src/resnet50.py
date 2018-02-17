@@ -103,7 +103,7 @@ class Resnet50():
 
 
     @classmethod
-    def get_batches(cls, path, gen=image.ImageDataGenerator(),class_mode='categorical', shuffle=True, batch_size=8):
+    def get_batches(cls, path, gen=image.ImageDataGenerator(), class_mode='categorical', shuffle=True, batch_size=8):
         return gen.flow_from_directory(path,
                                        target_size=(224,224),
                                        class_mode=class_mode,
@@ -117,14 +117,19 @@ class Resnet50():
         model.layers.pop()
         for layer in model.layers:
             layer.trainable=False
-        m = Dense(batches.nb_class, activation='softmax')(model.layers[-1].output)
+        m = Dense(batches.num_classes, activation='softmax')(model.layers[-1].output)
         self.model = Model(model.input, m)
         self.model.compile(optimizer=RMSprop(lr=0.1), loss='categorical_crossentropy', metrics=['accuracy'])
 
 
-    def fit(self, batches, val_batches, nb_epoch=1):
-        self.model.fit_generator(batches, samples_per_epoch=batches.nb_sample, nb_epoch=nb_epoch,
-                 validation_data=val_batches, nb_val_samples=val_batches.nb_sample)
+    def fit(self, batches, val_batches, epochs=1):
+        epoch_steps = batches.samples // batches.batch_size
+        val_epoch_steps = val_batches.samples // val_batches.batch_size
+        self.model.fit_generator(batches,
+                                 steps_per_epoch=epoch_steps,
+                                 epochs=epochs,
+                                 validation_data=val_batches,
+                                 validation_steps=val_epoch_steps)
 
 
     def test(self, path, batch_size=8):
