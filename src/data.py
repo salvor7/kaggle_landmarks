@@ -36,7 +36,7 @@ def landmark_images():
     return landmark2image, image2landmark
 
 
-def make_subsample(train=1000, valid=100):
+def make_subsample(train=1000, valid=1000, classes=10):
     """Make a subsample of landmark training images
 
     Creates both training set, and a validation set from training data, and organizes them
@@ -46,7 +46,15 @@ def make_subsample(train=1000, valid=100):
     :param valid: int
     :return: None
     """
-    subsample = random.sample(landmark_images()[1].keys(), k=train+valid)
+    while True:
+        random_classes = random.sample(landmark_images()[0].keys(), k=classes)
+        available_images = sum([landmark_images()[0][class_] for class_ in random_classes], [])
+        try:
+            subsample = random.sample(available_images, k=train+valid)
+        except ValueError:
+            pass
+        else:
+            break
 
     for idx, image_name in enumerate(subsample):
         if idx < train:
