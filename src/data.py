@@ -54,7 +54,7 @@ def resize_image(filename, src_folder, dest_folder, target_size):
         image_orig = Image.open(src_folder + filename)
     except Exception as err:
         print(f'Warning: Failed to open image {filename} because {err}')
-        return
+        return False
 
     # determine the new size of the image
     img_size = image_orig.size
@@ -69,13 +69,13 @@ def resize_image(filename, src_folder, dest_folder, target_size):
         image_resized = image_orig.resize(img_resize, Image.BICUBIC)
     except Exception as err:
         print(f'Warning: Failed to resize image {filename} because {err}')
-        return
+        return False
 
     # save the file to the destination folder
     try:
         image_resized.save(dest_folder + filename, format='JPEG', quality=90)
     except Exception as err:
         print(f'Warning: Failed to save image {filename} because {err}')
-        return
+        return False
 
-    return
+    return True
