@@ -2,6 +2,7 @@ import csv
 import os
 import pathlib
 from collections import defaultdict
+from PIL import Image
 
 import functools
 
