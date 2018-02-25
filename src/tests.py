@@ -21,7 +21,7 @@ def test_prediction():
 
 
 def test_landmark_images():
-    landmark2images, image2landmark = data.landmark_images()
+    landmark2images, image2landmark = data.training_images()
 
     assert len(image2landmark) > 1225000
     assert len(landmark2images) > 14951

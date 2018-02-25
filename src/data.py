@@ -35,20 +35,20 @@ def image_path(image_hex):
 
 
 @functools.lru_cache(maxsize=1)
-def landmark_images():
+def training_images():
     """Returns dictionaries linking training image path strings to landmarks
 
-    :param lm: str
-    :return: [str, ...]
+    :param maxsize: int
+    :return: ({str: [str, ...], ...}, {str: str})
     """
     landmark2image = defaultdict(list)
     image2landmark = {}
 
     with open(path_string('data', 'recognition', 'train.csv')) as training_set:
         reader = csv.reader(training_set)
-        for image, url, landmark in reader:
-            image2landmark[image] = landmark
-            landmark2image[landmark].append(image)
+        for image_hex, url, landmark in reader:
+            image2landmark[image_hex] = landmark
+            landmark2image[landmark].append(image_hex)
 
     return landmark2image, image2landmark
 
@@ -64,8 +64,8 @@ def make_subsample(train=1000, valid=1000, classes=10):
     :return: None
     """
     while True:
-        random_classes = random.sample(landmark_images()[0].keys(), k=classes)
-        available_images = sum([landmark_images()[0][class_] for class_ in random_classes], [])
+        random_classes = random.sample(training_images()[0].keys(), k=classes)
+        available_images = sum([training_images()[0][class_] for class_ in random_classes], [])
         try:
             subsample = random.sample(available_images, k=train+valid)
         except ValueError:
@@ -79,7 +79,7 @@ def make_subsample(train=1000, valid=1000, classes=10):
         else:
             subfolder = 'valid_images'
 
-        landmark_name = landmark_images()[1][image_name]
+        landmark_name = training_images()[1][image_name]
         image_new_folder = path_string('data', 'sample', subfolder, landmark_name)
         os.makedirs(image_new_folder, exist_ok=True)
 
