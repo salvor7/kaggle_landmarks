@@ -1,4 +1,6 @@
 import logging
+import os
+
 logging.getLogger('tensorflow').disabled = True     # turn down verbosity of TF logs
 
 import data
@@ -23,3 +25,7 @@ def test_landmark_images():
 
     assert len(image2landmark) > 1225000
     assert len(landmark2images) > 14951
+
+
+def test_image_path():
+    assert os.path.join('data', 'train_images', 'e8') in data.image_path('e8a0ff97bd7d12af')

@@ -17,6 +17,23 @@ def path_string(*args):
     return os.path.join(str(pathlib.Path(__file__).parents[1]), *args)
 
 
+@functools.lru_cache()
+def image_path(image_hex):
+    """Return the path of a competition image file given it's hex name
+
+    :param image_hex: str
+    :param data_set: str
+    :param extension: str
+    :return: str
+    """
+    for dataset in ['train', 'test', 'index']:
+        image_location = path_string('data', dataset+'_images', image_hex[:2], image_hex+'.jpg')
+        if os.path.isfile(image_location):
+            return image_location
+
+    raise FileNotFoundError(f'Key {image_hex} does not refer to a landmark image.')
+
+
 @functools.lru_cache(maxsize=1)
 def landmark_images():
     """Returns dictionaries linking training image path strings to landmarks
