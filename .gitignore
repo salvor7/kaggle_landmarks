@@ -1,6 +1,9 @@
 # no data
 data
 
+# no models
+model
+
 
 # Kaggle
 .kaggle-cli

@@ -2,7 +2,6 @@
 Adds source code folder to PYTHONPATH, so imports can be made from notebooks.
 """
 
-import os
 import sys
 import pathlib
 
@@ -11,4 +10,4 @@ import pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).parents[1] / 'src'))
 
 import data
-import script
+from resnet50 import Resnet50
